@@ -17,34 +17,35 @@ function header() {
 		{
 			name: "Login",
 			slug: "/login",
-			active: !authStatus,
+			active: authStatus,
 		},
 		{
-			name: "Signup",
+			name: "SignUp",
 			slug: "/signup",
-			active: !authStatus,
+			active: authStatus,
 		},
 		{
 			name: "All Posts",
 			slug: "/all-posts",
-			active: authStatus,
+			active: !authStatus,
 		},
 		{
 			name: "Add Post",
 			slug: "/add-post",
-			active: authStatus,
+			active: !authStatus,
 		},
 	]
 
 	return (
-		<header>
+		<header >
 			<Container>
-				<nav className="flex">
-					<div className="mr-4">
+				<nav className="flex w-full p-4 pl-8 ">
+					<div className="mr-4 flex">
 						<Link to = '/'>
 							<Logo width="40px">
 							</Logo>
 						</Link>
+						<span class="pl-4 self-center text-2xl font-semibold whitespace-nowrap dark:text-black">Blogger</span>
 					</div>
 					<ul className="flex ml-auto">
 						{navItems.map((item)=>(
@@ -66,6 +67,7 @@ function header() {
 				</nav>
 			</Container>
 		</header>
+		
 	)
 }
 

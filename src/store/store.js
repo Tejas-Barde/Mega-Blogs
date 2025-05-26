@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { configureStore } from '@reduxjs/toolkit';
-import { login, logout } from './AuthSlice';
+import { login, logout } from './authSlice';
 import authService from '../appwrite/auth';
-import authSlice from './AuthSlice.js'
+import authSlice from './authSlice.js'
 
 const store = configureStore({
     reducer :{

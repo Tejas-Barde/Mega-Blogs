@@ -1,7 +1,7 @@
 /* eslint-disable no-empty */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import conf from 'conf.js';
+import conf from '../conf/conf.js';
 import { Client, Account, ID ,Databases, Storage, Query} from 'appwrite';
 import { data } from 'react-router-dom';
 
@@ -56,7 +56,7 @@ export class Service{
         }
     }
 
-    async deleteDocument(slug){
+    async deletePost(slug){
         try {
             await this.databases.deleteDocument(
                 conf.databaseId,
@@ -123,6 +123,8 @@ export class Service{
     }
 
     getPreview(fileId){
+        // console.log(`File Id - `,fileId)
+        // console.log(fileId)
         try {
             return this.storage.getFilePreview(
                 conf.bucketId,

@@ -1,28 +1,31 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import appwriteService from '../appwrite/config';
-import { Container } from 'postcss';
+import {Container} from '../components';
 import { PostForm } from '../components';
 
 
-function EditPosts() {
+function EditPost() {
 	const navigate = useNavigate()
-  const [post, setPost] = useState(null);
-	const {slug} = useParams()
-	useEffect((slug) => {
-		if(slug){
-			appwriteService.getPost().then(post=>{
-				if(post){
+	const [post, setPost] = useState(null);
+	const { slug } = useParams()
+	useEffect(()=> {
+		console.log(`slug inside edit post `)
+		console.log(slug)
+		if (slug) {
+			appwriteService.getPost(slug).then(post => {
+				if (post) {
+					console.log(`innside editpost slug`);
 					setPost(post);
 				}
-				else{
+				else {
 					navigate("/")
 				}
 			})
 		}
-	}, [navigate,slug]);
-	
-  return post?(
+	}, [navigate, slug]);
+
+	return post ? (
 		<div className='py-8'>
 			<Container>
 				<PostForm
@@ -30,7 +33,7 @@ function EditPosts() {
 				/>
 			</Container>
 		</div>
-	):null
+	) : null
 }
 
-export default EditPosts
+export default EditPost

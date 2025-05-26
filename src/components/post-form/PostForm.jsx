@@ -1,12 +1,16 @@
 import React, { useCallback } from 'react'
-import { Select, RTE, Input, Button } from '../index'
+import { RTE, Button } from '../index'
+import Input from '../Input'
 import { useSelector } from 'react-redux'
-import { useLinkClickHandler, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import authWriteService from '../../appwrite/config'
 import { set, useForm } from 'react-hook-form'
+import Select from '../Select'
+import { ID } from 'appwrite'
 
 export default function PostForm({ post }) {
-	const { register, handleSubmit, watch, setValue, control } = useForm({
+
+	const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
 		defaultValues: {
 			title: post?.title || "",
 			slug: post?.slug || "",
@@ -16,56 +20,69 @@ export default function PostForm({ post }) {
 	})
 
 	const navigate = useNavigate()
-	const useData = useSelector(state => state.user.userData);
+	const userData = useSelector(state => state.auth.userData);
+
+	console.log("User data error - ", userData);
 
 	const submit = async (data) => {
+		console.log(`data after submit - ${data}`);
 		if (post) {
 			const file = data.image[0] ? authWriteService.uploadFile(data.image[0]) : null;
 			if (file) {
 				authWriteService.deleteFile(post.featuredImage)
 			}
-
 			const dbpost = await authWriteService.updatePost(post.$id, {
 				...data,
 				featuredImage: file ? file.$id : undefined,
 			})
 			if (dbpost) {
+				console.log(post)
 				navigate(`/post/${post.$id}`)
 			}
 		}
 		else {
-			const file = data.image[0] ? await authWriteService.uploadFile() : null;
+			const file = data.image[0] ? await authWriteService.uploadFile(data.image[0]) : null;
 			if (file) {
 				const fileId = file.$id;
 				data.featuredImage = fileId
+				console.log(`data to be create post - ${data}`);
+				console.log(data);
+				console.log(`userId - ${userData.$id}`);
+				console.log(data.slug)
 				const dbPost = await authWriteService.createPost({
 					...data,
-					userId: userData.$id
+					userId:userData.$id
 				})
 
-				if (dbPost) navigate(`/post/${dbPost.$id}`);
+				if (dbPost) navigate(`/post/${data.slug}`);
 			}
 		}
 
-		const slugTransform = useCallback((data) => {
-			if (data && typeof data === 'string') {
-				return data
-					.trim()
-					.toLowerCase()
-					.replace(/^[a-zA-z\d\s]+/g, '-');
-			}
-			return ""
-		})
 
-		React.useEffect(() => {
-			const subscription = watch((value, { name }) => {
-				setValue(slug, slugTransform(value.title, {
-					shouldValidate: true
-				}))
-			})
-			return () => { subscription.unsubscribe() }
-		}, [watch, slugTransform, setValue])
 	}
+	const slugTransform = useCallback((value) => {
+		if (value && typeof value === "string") {
+			return value
+				.trim()
+				.toLowerCase()
+				.replace(/[^\w\s-]/g, "")       
+				.replace(/\s+/g, "-")           
+				.replace(/--+/g, "-")           
+				.replace(/^-+|-+$/g, "");       
+		}
+		return "";
+	}, []);
+
+
+	React.useEffect(() => {
+		const subscription = watch((value, { name }) => {
+			if (name === 'title') {
+				setValue("slug", slugTransform(value.title), { shouldValidate: true })
+			}
+		})
+		return () => { subscription.unsubscribe() }
+	}, [watch, slugTransform, setValue])
+
 	return (
 		<form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
 			<div className="w-2/3 px-2">
@@ -97,7 +114,7 @@ export default function PostForm({ post }) {
 				{post && (
 					<div className="w-full mb-4">
 						<img
-							src={authWriteService.getFilePreview(post.featuredImage)}
+							src={authWriteService.getPreview(post.featuredImage)}
 							alt={post.title}
 							className="rounded-lg"
 						/>

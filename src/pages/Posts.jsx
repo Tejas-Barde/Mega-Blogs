@@ -12,10 +12,11 @@ export default function Post() {
 
     const userData = useSelector((state) => state.auth.userData);
 
-    const isAuthor = post && userData ? post.userId === userData.$id : false;
-
+    const isAuthor = true;
     useEffect(() => {
         if (slug) {
+            console.log(`slug inside posts - `)
+            console.log(slug)
             appwriteService.getPost(slug).then((post) => {
                 if (post) setPost(post);
                 else navigate("/");
@@ -37,7 +38,7 @@ export default function Post() {
             <Container>
                 <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
                     <img
-                        src={appwriteService.getFilePreview(post.featuredImage)}
+                        src={appwriteService.getPreview(post.featuredImage)}
                         alt={post.title}
                         className="rounded-xl"
                     />
@@ -45,7 +46,7 @@ export default function Post() {
                     {isAuthor && (
                         <div className="absolute right-6 top-6">
                             <Link to={`/edit-post/${post.$id}`}>
-                                <Button bgColor="bg-green-500" className="mr-3">
+                                <Button bgColor="bg-green-500" className="mr-3" >
                                     Edit
                                 </Button>
                             </Link>

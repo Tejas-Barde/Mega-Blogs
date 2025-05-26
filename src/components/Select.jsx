@@ -5,7 +5,7 @@ function Select({
   label,
   className = '',
   ...props
-}) {
+},ref) {
   const id = useId();
   return (
     <div className='w-full'>

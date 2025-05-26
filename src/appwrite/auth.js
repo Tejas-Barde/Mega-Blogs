@@ -2,10 +2,10 @@ import conf from '../conf/conf.js';
 import { Client,Account, ID } from 'appwrite';
 
 export class AuthService{
-    client;
+    client  = new Client();
     account;
     constructor(){
-        this.client = new Client()
+        this.client
             .setEndpoint(conf.appwriteUrl)
             .setProject(conf.projectId);
         this.account = new Account(this.client);
@@ -39,16 +39,19 @@ export class AuthService{
         try {
             return await this.account.get();
         } catch (error) {
-            console.log(error);
-            throw error;
+            console.log("Appwrite serive :: getCurrentUser :: error", error);
+            return null;
         }
     }
 
     async logout(){
         try {
-            return await this.account.deleteSessions();
+            
+            return await this.account.deleteSessions(
+                "current"
+            );
         } catch (error) {
-            console.log(error);
+            console.log("Delete Session called after logout - error - ",error);
             throw error;   
         }
     }

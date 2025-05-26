@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect ,useState} from 'react'
 import appwriteService from '../appwrite/config'
 import { set } from 'react-hook-form';
-import { Container } from 'postcss';
+import Container from '../components/container/Container';
+import { PostCard } from '../components';
 
 
 function Home() {
@@ -19,9 +20,7 @@ function Home() {
 				<Container>
 					<div className='flex flex-wrap'>
 						<div className='p-2 w-full'>
-							<h1 className='text-2xl font-bold hover:text-gray-500'>
-								Login To Read
-							</h1>
+							{/* <img className='w-full' src='src\assets\download.jpeg'/> */}
 						</div>
 					</div>
 				</Container>
@@ -29,8 +28,16 @@ function Home() {
 		)
 	}
 	return (
-		<div>
-
+		<div className='w-full py-8'>
+			<Container>
+				<div className='flex flex-wrap'>
+					{posts.map(post=>(
+						<div key={post.$id} className='p-2 w-1/4'>
+							<PostCard post= {post}></PostCard>
+						</div>
+					))}
+				</div>
+			</Container>
 		</div>
 	)
 }
